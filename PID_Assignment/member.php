@@ -22,6 +22,7 @@ if (isset($_GET["normalo"])) {
   $sqlnormalo = "UPDATE `member` SET `mestatus` = 'normal' WHERE `member`.`meid` = '$normalo'; ";
   mysqli_query($link, $sqlnormalo);
 }
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -119,6 +120,7 @@ if (isset($_GET["normalo"])) {
                 <td>
                 <button type="submit" name="Disablex" id="Disablex" class="btn btn-danger" value="<?php echo $row['meid'] ?>">禁用</button>
                 <button type="submit" name="normalo" id="normalo" class="btn btn-success" value="<?php echo $row['meid'] ?>">啟用</button>
+                <button type="button" name="orders" class="btn btn-primary" onclick="window.location='orders2.php?id=<?php echo $row['meaccount']?>'">訂單查詢</button>
                 <?php
                  ?>
               </td>

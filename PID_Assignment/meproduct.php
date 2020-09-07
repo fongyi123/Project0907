@@ -13,7 +13,7 @@ if (isset($_SESSION["meaccount"])) {
 if (isset($_GET["gocart"])) {
   $gocart = $_GET["gocart"];
 
-  $sqlgocart = "INSERT INTO cart (prid, prname, prprice, prdescript, primg) SELECT prid, prname, prprice, prdescript, primg FROM product WHERE prid = '$gocart'";
+  $sqlgocart = "INSERT INTO cart (prid, prname, prprice, prquantity, prdescript, primg) SELECT prid, prname, prprice, prquantity, prdescript, primg FROM product WHERE prid = '$gocart'";
 
   mysqli_query($link, $sqlgocart);
   header("Location: cart.php");

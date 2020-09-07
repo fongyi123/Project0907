@@ -148,10 +148,14 @@ create table product
 create table orders
 (
     orid int(50) auto_increment primary key,
-    meid int(15),
-    prid int(30),
-    prprice int(20),
-    orquantity int(30),
+    meaccount varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+    caid int(30) COLLATE utf8_unicode_ci NOT NULL,
+    prid int(20) COLLATE utf8_unicode_ci NOT NULL,
+    prname varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+    prprice int(20) COLLATE utf8_unicode_ci NOT NULL,
+    caquantity int(50) COLLATE utf8_unicode_ci NOT NULL,
+    prdescript varchar(150) COLLATE utf8_unicode_ci NOT NULL,
+    primg blob NOT NULL,
     ordate datetime
     
 )
@@ -162,7 +166,10 @@ create table cart
     prname varchar(50) COLLATE utf8_unicode_ci NOT NULL,
     prprice int(20) COLLATE utf8_unicode_ci NOT NULL,
     caquantity int(50) COLLATE utf8_unicode_ci NOT NULL,
-    catotal int(20) COLLATE utf8_unicode_ci NOT NULL,
+    prquantity int(50) COLLATE utf8_unicode_ci NOT NULL,
     prdescript varchar(150) COLLATE utf8_unicode_ci NOT NULL,
     primg blob 
 );
+
+
+truncate table cart

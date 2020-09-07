@@ -12,15 +12,62 @@ if (isset($_SESSION["meaccount"])) {
 if (isset($_GET["gopro"])) {
   header("Location: meproduct.php");
 }
-if (isset($_GET["cartok"])) {
-  header("Location: orders.php");
-}
+
 if (isset($_GET["deletenew"])) {
   $deleten = $_GET["deletenew"];
 
-  $sqldelete = "DELETE  FROM cart WHERE prid = '$deleten' ";
+  $sqldelete = "DELETE  FROM cart WHERE caid = '$deleten' ";
   mysqli_query($link, $sqldelete);
 }
+
+if (isset($_GET["caquantityadd"])) {
+  $caquantityadd = $_GET["caquantityadd"];
+  $caquantityt = $_GET['caquantityt'];
+
+  $sqladd = "SELECT caquantity from cart where caid = '$caquantityadd'";
+  $result = mysqli_query($link, $sqladd);
+  $row = mysqli_fetch_assoc($result);
+  $i = implode(" ", $row);
+  $sqlprq = "SELECT prquantity from cart where caid = '$caquantityadd'";
+  $result1 = mysqli_query($link, $sqlprq);
+  $row1 = mysqli_fetch_assoc($result1);
+  $prquantity = implode(" ", $row1);
+  if ($i < $prquantity) {
+    $i = $i + 1;
+
+    $caquantityt = $_GET['caquantityt'];
+    $caquantitya = "UPDATE `cart` SET `caquantity` = '$i' WHERE `caid` = '$caquantityadd' ";
+    mysqli_query($link, $caquantitya);
+  }
+}
+if (isset($_GET["caquantityr"])) {
+  $caquantityr = $_GET["caquantityr"];
+  $caquantityt = $_GET['caquantityt'];
+
+  $sqlr = "SELECT caquantity from cart where caid = '$caquantityr'";
+  $result = mysqli_query($link, $sqlr);
+  $row = mysqli_fetch_assoc($result);
+  $i = implode(" ", $row);
+
+  if ($i > 0) {
+    $i = $i - 1;
+    $caquantityt = $_GET['caquantityt'];
+    $caquantitya = "UPDATE `cart` SET `caquantity` = '$i' WHERE `caid` = '$caquantityr' ";
+    mysqli_query($link, $caquantitya);
+  }
+}
+if (isset($_GET["cartok"])) {
+  $meaccount = $_SESSION["meaccount"];
+  $ordate = date('Y-m-d h:i:s');
+  $sqlorders = "INSERT INTO orders (meaccount,	caid,	prid,	prname,	prprice,	caquantity,	prdescript,	primg, ordate
+  ) SELECT '$meaccount', caid,	prid,	prname,	prprice,	caquantity,	prdescript,	primg, '$ordate' FROM cart ";
+  mysqli_query($link, $sqlorders);
+  $sqlclear = "TRUNCATE table cart";
+  mysqli_query($link, $sqlclear);
+
+  header("Location: orders.php");
+}
+
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -63,11 +110,10 @@ if (isset($_GET["deletenew"])) {
   <form id="form1" name="form1" border="0" align="center" cellpadding="5" cellspacing="0" bgcolor="#F2F2F2">
 
     <div align="center" bgcolor="#CCCCCC" style="background-color:SlateBlue;">
-      <font color="#FFFFFF"><?= "歡迎 " . $meaccount ."  進入購物車" ?></font>
+      <font color="#FFFFFF"><?= "歡迎 " . $meaccount . "  進入購物車" ?></font>
     </div>
     <div align="center" bgcolor="#CCCCCC"><a href="index.php">回首頁</a></div>
     <div align="center" bgcolor="#CCCCCC">
-      <button type="submit" name="cartok" id="gocart" class="btn btn-success">送出訂單</button>
     </div>
     <div style="width:auto;height:600px;">
       <div style="width:auto;height:600px;text-align:center;margin:0 auto;">
@@ -75,9 +121,8 @@ if (isset($_GET["deletenew"])) {
         $link = @mysqli_connect("localhost", "root", "root", "shopping", 8889) or die(mysqli_connect_error());
         $result = mysqli_query($link, "set names utf8");
         $meaccount = $_SESSION["meaccount"];
-        $sqlsecret = "SELECT * from cart";
-        $result = mysqli_query($link, $sqlsecret);
-
+        $sqlcar = "SELECT * from cart";
+        $result = mysqli_query($link, $sqlcar);
         $total_records = mysqli_num_rows($result);  // 取得記錄數
 
         // echo ($total_records);
@@ -90,7 +135,7 @@ if (isset($_GET["deletenew"])) {
             <td>商品名稱</td>
             <td>商品價格</td>
             <td>購買數量</td>
-            <td>商品總額</td>
+            <td>每項總額</td>
             <td>商品描述</td>
             <td>商品圖片</td>
             <td>編輯功能</td>
@@ -98,9 +143,14 @@ if (isset($_GET["deletenew"])) {
           </tr>
           <?php
           while ($row = mysqli_fetch_assoc($result)) {
-
           ?>
             <tr>
+              <?php
+              $total = $row['caquantity'] * $row['prprice'];
+              // 錯誤訊息Notice: Undefined variable:關掉
+              error_reporting(E_ALL & ~E_NOTICE);
+              $all = $all + $total;
+              ?>
               <td>
                 <?php echo $row['prid'];   ?>
               </td>
@@ -112,14 +162,14 @@ if (isset($_GET["deletenew"])) {
               </td>
               <td>
                 <span class="input-group">
-                  <button type="submit" name="caquantityadd" id="caquantityadd" value="<?php echo $row['prid'] ?>" class="input-group-addon">+</button>
-                  <input type="text" name="caquantity" id="caquantity" class="form-control" placeholder="0" value="0" />
-                  <button type="submit" name="caquantityr" id="caquantityr" value="<?php echo $row['prid'] ?>">-</button>
+                  <button type="submit" name="caquantityadd" id="caquantityadd" value="<?php echo $row['caid'] ?>" class="input-group-addon">+</button>
+                  <input type="text" name="caquantityt" id="caquantityt" class="form-control" placeholder="0" value="<?php echo $row['caquantity'] ?>" />
+                  <button type="submit" name="caquantityr" id="caquantityr" value="<?php echo $row['caid'] ?>">-</button>
                 </span>
               </td>
 
               <td>
-                <input type="text" name="catotal" style="background-color: transparent;" id="catotal" class="form-control" placeholder="0" value="0" onfocus="this.blur()" />
+                <input type="text" name="catotal" style="background-color: transparent;" id="catotal" class="form-control" placeholder="0" value="<?php echo $total; ?>" onfocus="this.blur()" />
               </td>
               <td>
                 <?php echo $row['prdescript']; ?>
@@ -129,18 +179,25 @@ if (isset($_GET["deletenew"])) {
               </td>
               <td>
                 <button type="submit" name="gopro" id="gocart" class="btn btn-info">繼續購物</button>
-                <button type="submit" name="deletenew" id="deletenew" class="btn btn-danger" value="<?php echo $row['prid'] ?>">刪除商品</button>
+                <button type="submit" name="deletenew" id="deletenew" class="btn btn-danger" value="<?php echo $row['caid'] ?>">刪除商品</button>
                 <?php
                 ?>
               </td>
             </tr>
           <?php    }   ?>
         </table>
+        <!-- <div align="right"> -->
+        <input type="text" name="alltotal" id="alltotal" class="form-control" style="background-color: transparent;" placeholder="合計" value="<?php error_reporting(E_ALL & ~E_NOTICE);
+                                                                                                                                              echo "合計： " . $all ?>" onfocus="this.blur()" />
+        <button type="submit" name="cartok" id="cartok" class="btn btn-success">送出訂單</button>
+
+        <!-- </div> -->
       </div>
     </div>
-    
+
+
   </form>
-  
+
 </body>
 
 </html>

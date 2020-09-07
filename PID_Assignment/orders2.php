@@ -2,12 +2,12 @@
 require_once("connDB.php");
 
 session_start();
-if (isset($_SESSION["meaccount"])) {
-  $meaccount = $_SESSION["meaccount"];
+if (isset($_SESSION["maaccount"])) {
+  $maaccount = $_SESSION["maaccount"];
 } else {
-  if (!isset($_SESSION["meaccount"])) {
+  if (!isset($_SESSION["maaccount"])) {
 
-    header("Location: login.php");
+    header("Location: login2.php");
     exit();
   }
 }
@@ -54,9 +54,9 @@ if (isset($_SESSION["meaccount"])) {
   <h1 align="center">線上購書商城</h1>
   <form id="form1" name="form1" border="0" align="center" cellpadding="5" cellspacing="0" bgcolor="#F2F2F2">
     <div align="center" bgcolor="#CCCCCC" style="background-color:SlateBlue;">
-      <font color="#FFFFFF"><?= $meaccount . "   管理員訂單查詢"  ?></font>
+      <font color="#FFFFFF"><?= $maaccount . "   管理員訂單查詢"  ?></font>
     </div>
-    <div align="center" bgcolor="#CCCCCC"><a href="index.php">回首頁</a></div>
+    <div align="center" bgcolor="#CCCCCC"><a href="index2.php">回首頁</a></div>
     <div style="width:auto;height:600px;">
       <div style="width:auto;height:600px;text-align:center;margin:0 auto;">
         <label>
@@ -66,9 +66,11 @@ if (isset($_SESSION["meaccount"])) {
         $link = @mysqli_connect("localhost", "root", "root", "shopping", 8889) or die(mysqli_connect_error());
         $result = mysqli_query($link, "set names utf8");
         $meaccount = $_SESSION["meaccount"];
-        $sqlsecret = "SELECT * from orders Where meaccount ='$meaccount'";
-        $result = mysqli_query($link, $sqlsecret);
-
+        // $sqlsecret = "SELECT * from orders Where meaccount ='$meaccount'";
+        // $result = mysqli_query($link, $sqlsecret);
+        $id = $_GET["id"];
+        $sqlo = "SELECT * FROM orders WHERE meaccount ='$id'";
+        $result = mysqli_query($link, $sqlo); 
         $total_records = mysqli_num_rows($result);  // 取得記錄數
 
         echo ($total_records);

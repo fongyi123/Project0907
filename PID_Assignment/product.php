@@ -10,15 +10,19 @@ if (isset($_SESSION["maaccount"])) {
   }
 }
 if (isset($_GET["okButton"])) {
-  $prnamenew = $_GET["prnamenew"];
-  $prpricenew = $_GET["prpricenew"];
-  $prquantitynew = $_GET["prquantitynew"];
-  $prdescriptnew = $_GET["prdescriptnew"];
-  $primgnew = $_GET["primgnew"];
+  if ($currentIndex = -1) {
+    $prnamenew = $_GET["prnamenew"];
+    $prpricenew = $_GET["prpricenew"];
+    $prquantitynew = $_GET["prquantitynew"];
+    $prdescriptnew = $_GET["prdescriptnew"];
+    $primgnew = $_GET["primgnew"];
 
-  $sqlnew = "INSERT INTO product (prname, prprice, prquantity, prdescript, primg) values('$prnamenew','$prpricenew','$prquantitynew','$prdescriptnew','$primgnew')";
-  mysqli_query($link, $sqlnew);
-}  
+    $sqlnew = "INSERT INTO product (prname, prprice, prquantity, prdescript, primg) values('$prnamenew','$prpricenew','$prquantitynew','$prdescriptnew','$primgnew')";
+    mysqli_query($link, $sqlnew);
+  }else{
+
+  }
+}
 
 if (isset($_GET["deletenew"])) {
   $deleten = $_GET["deletenew"];
@@ -73,67 +77,67 @@ if (isset($_GET["deletenew"])) {
       <font color="#FFFFFF">商品管理</font>
     </div>
     <div align="center" bgcolor="#CCCCCC"><a href="index2.php">回首頁</a></div>
-    
-        <label>
-          <font color="#000000">商品列表 :
-        </label>
-        <?php
-        $link = @mysqli_connect("localhost", "root", "root", "shopping", 8889) or die(mysqli_connect_error());
-        $result = mysqli_query($link, "set names utf8");
-        $maaccount = $_SESSION["maaccount"];
-        $sqlsecret = "SELECT * from product";
-        $result = mysqli_query($link, $sqlsecret);
 
-        $total_records = mysqli_num_rows($result);  // 取得記錄數
+    <label>
+      <font color="#000000">商品列表 :
+    </label>
+    <?php
+    $link = @mysqli_connect("localhost", "root", "root", "shopping", 8889) or die(mysqli_connect_error());
+    $result = mysqli_query($link, "set names utf8");
+    $maaccount = $_SESSION["maaccount"];
+    $sqlsecret = "SELECT * from product";
+    $result = mysqli_query($link, $sqlsecret);
 
-        echo ($total_records);
-        ?>
-        <input type="button" name="addnewpro" id="addnewpro" class="btn btn-success" value="上架商品" />
+    $total_records = mysqli_num_rows($result);  // 取得記錄數
 
-        <table border="1" cellspacing=0 cellspadding=0>
-          <tr>
-            <td>商品編號</td>
-            <td>商品名稱</td>
-            <td>商品價格</td>
-            <td>商品數量</td>
-            <td>商品描述</td>
-            <td>商品圖片</td>
-            <td>編輯功能</td>
+    echo ($total_records);
+    ?>
+    <input type="button" name="addnewpro" id="addnewpro" class="btn btn-success" value="上架商品" />
 
-          </tr>
-          <?php
-          while ($row = mysqli_fetch_assoc($result)) {
+    <table border="1" id = "latestNews" cellspacing=0 cellspadding=0>
+      <tr>
+        <td>商品編號</td>
+        <td>商品名稱</td>
+        <td>商品價格</td>
+        <td>商品數量</td>
+        <td>商品描述</td>
+        <td>商品圖片</td>
+        <td>編輯功能</td>
 
-          ?>
-            <tr>
-              <td>
-                <?php echo $row['prid'];   ?>
-              </td>
-              <td>
-                <?php echo $row['prname'];   ?>
-              </td>
-              <td>
-                <?php echo $row['prprice']; ?>
-              </td>
-              <td>
-                <?php echo $row['prquantity']; ?>
-              </td>
-              <td>
-                <?php echo $row['prdescript']; ?>
-              </td>
-              <td>
-              <img id=<?php echo $row['primg']; ?> src="./img/<?php echo $row['primg']; ?>"  width="10%" height="10%">
-              </td>
-              <td>
-                <input type="submit" name="updatenew" id="updatenew" class="btn btn-info" value="編輯" />
-                <button type="submit" name="deletenew" id="deletenew" class="btn btn-danger" value="<?php echo $row['prid'] ?>">刪除</button>
-                <?php
-                 ?>
-              </td>
-            </tr>
-          <?php    }   ?>
-        </table>
-     
+      </tr>
+      <?php
+      while ($row = mysqli_fetch_assoc($result)) {
+
+      ?>
+        <tr>
+          <td>
+            <?php echo $row['prid'];   ?>
+          </td>
+          <td>
+            <?php echo $row['prname'];   ?>
+          </td>
+          <td>
+            <?php echo $row['prprice']; ?>
+          </td>
+          <td>
+            <?php echo $row['prquantity']; ?>
+          </td>
+          <td>
+            <?php echo $row['prdescript']; ?>
+          </td>
+          <td>
+            <img id=<?php echo $row['primg']; ?> src="./img/<?php echo $row['primg']; ?>" width="10%" height="10%">
+          </td>
+          <td>
+            <input type="button" name="updatenew" id="updatenew" class="btn btn-info" value="編輯" />
+            <button type="submit" name="deletenew" id="deletenew" class="btn btn-danger" value="<?php echo $row['prid'] ?>">刪除</button>
+            <?php
+            ?>
+          </td>
+        </tr>
+      <?php    }   ?>
+    </table>
+
     </div>
     <div style=" background-color:SlateBlue;">
       <font color="#FFFFFF"><?= "Welcome! " . $maaccount ?></font>
@@ -148,33 +152,33 @@ if (isset($_GET["deletenew"])) {
             <h4>上架/編輯</h4>
           </div>
           <div class="modal-body">
-            <form enctype="multipart/form-data" >
+            <form enctype="multipart/form-data">
               <div class="form-group">
-                <label for="titleTextBox">
+                <label for="prnamenew">
                   商品名稱
                 </label>
                 <input type="text" name="prnamenew" id="prnamenew" class="form-control" placeholder="請輸入商品名稱" />
               </div>
               <div class="form-group">
-                <label for="ymdTextBox">
+                <label for="prpricenew">
                   商品價格
                 </label>
                 <input type="text" name="prpricenew" id="prpricenew" class="form-control" placeholder="請輸入商品價格">
               </div>
               <div class="form-group">
-                <label for="ymdTextBox">
+                <label for="prquantitynew">
                   商品數量
                 </label>
                 <input type="text" name="prquantitynew" id="prquantitynew" class="form-control" placeholder="請輸入商品數量">
               </div>
               <div class="form-group">
-                <label for="ymdTextBox">
+                <label for="prdescriptnew">
                   商品描述
                 </label>
                 <input type="text" name="prdescriptnew" id="prdescriptnew" class="form-control" placeholder="請輸入商品描述">
               </div>
               <div class="form-group">
-                <label for="ymdTextBox">
+                <label for="primgnew">
                   商品圖片
                 </label>
                 <input type="file" name="primgnew" id="primgnew" class="form-control" placeholder="請輸入商品圖片">
@@ -193,12 +197,29 @@ if (isset($_GET["deletenew"])) {
     <!-- /對話盒 -->
   </form>
   <script>
+    var currentIndex = -1;
     $("#addnewpro").click(function() {
       // alert("OK");
       $("#newsModal").modal({
         backdrop: "static"
       });
     })
+    // $.get("/home/product", function (e) {
+    //     refreshNewsUI();
+    // })
+    // $(".updatenew").click(function () {
+    //         var iIndex = $(this).parent().parent().index();
+    //         var iIndex = $(this).closest("li").index();
+    //         currentIndex = iIndex;
+    //         $("#prnamenew").val(newsList[iIndex].prnamenew);
+    //         $("#prpricenew").val(newsList[iIndex].prpricenew);
+    //         $("#prquantitynew").val(newsList[iIndex].prquantitynew);
+    //         $("#prdescriptnew").val(newsList[iIndex].prdescriptnew);
+    //         $("#primgnew").val(newsList[iIndex].primgnew);
+    //         $("#newsModal").modal( { 
+    //           backdrop: "static" 
+    //         } );
+    //     })
   </script>
 </body>
 
